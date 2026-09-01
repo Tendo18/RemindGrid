@@ -5,7 +5,8 @@ from django.utils import timezone
 from datetime import timedelta
 from django.core.cache import cache
 import secrets
-from .utils import generate_authentication_token, send_password_reset_confirmation_email, send_verification_email, send_login_email, generate_otp, send_password_reset_email, send_account_lock_email
+from .utils import generate_authentication_token, generate_otp
+from .tasks import send_verification_email_task, send_password_reset_email_task, send_password_reset_confirmation_email_task, send_account_lock_email_task
 
 EMAIL_EXPIRY_OTP_TIME = 15  # OTP expiry time
 
@@ -14,13 +15,10 @@ def create_email_verification_token(user):
     EmailVerificationToken.objects.filter(user=user, is_used=False).update(is_used=True)  # Update any used token to true
     token = secrets.token_urlsafe(32)
     EmailVerificationToken.objects.create(user=user, token=str(token), expires_at=timezone.now() + timedelta(minutes=EMAIL_EXPIRY_OTP_TIME))
-    try:
-        send_verification_email(user, token)
-    except Exception as e:
-        print(f"Error sending email: {e}")
-    return str(token)
+    send_verification_email_task.delay(user.id, token)
 
 def register_user(validated_data):
+    validated_data.pop('password2', None)  # Remove password2 if present
     user = User.objects.create_user(**validated_data)
     token = create_email_verification_token(user)
     return user
@@ -53,10 +51,7 @@ def resend_verification_email(user):
 
 def login_user(user):
     tokens = generate_authentication_token(user)
-    try:
-        send_login_email(user)
-    except Exception as e:
-        print(f"Error sending login notification email to {user.email}: {e}")
+    return tokens
         
 #service function to handle password reset request and sending OTP to user's email
 OTP_EXPIRY_TIME = 15  # OTP expiry time in minutes
@@ -65,7 +60,7 @@ def create_password_reset_otp(user):
     otp = generate_otp()
     PasswordResetOTP.objects.create(user=user, otp=otp, expires_at=timezone.now() + timedelta(minutes=OTP_EXPIRY_TIME))
     try:
-        send_password_reset_email(user, otp)
+        send_password_reset_email_task.delay(user.id, otp)
     except Exception as e:
         print(f"Error sending password reset email: {e}")
     return otp
@@ -95,12 +90,12 @@ def confirm_password_reset(user, otp_record, new_password):
     otp_record.is_used = True
     otp_record.save()
     try:
-        send_password_reset_confirmation_email(user)
+        send_password_reset_confirmation_email_task.delay(user.id)
     except Exception as e:
         print(f"Error sending password reset confirmation email: {e}")
     return user
 
-#service function to handle failed login attempt anad lockout user account after 5 failed attempts and send email notification to user
+#service function to handle failed login attempt and lockout user account after 3 failed attempts and send email notification to user
 FAILED_LOGIN_ATTEMPTS_LIMIT = 3
 LOCKOUT_TIME = 60 * 15  # Lockout time in minutes
 
@@ -125,7 +120,7 @@ def register_failed_login_attempt(email):
         user = User.objects.get(email=email)
         if failed_attempts >= FAILED_LOGIN_ATTEMPTS_LIMIT:
             try:
-                send_account_lock_email(user)
+                send_account_lock_email_task.delay(user.id )
             except Exception as e:
                 print(f"Error sending account lock email to {user.email}: {e}")
     except User.DoesNotExist:

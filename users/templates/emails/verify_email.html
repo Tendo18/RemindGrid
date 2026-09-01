@@ -1,0 +1,49 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Verify your RemindGrid email{% endblock %}
+{% block preheader %}Confirm your email to start using RemindGrid{% endblock %}
+{% block manage_url %}{{ frontend_url }}/profile/{% endblock %}
+
+{% block content %}
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="padding-bottom:4px;">
+      <span style="display:inline-block; background-color:#FFF7ED; color:#F97316; font-size:12px; font-weight:600; padding:4px 10px; border-radius:999px;">
+        VERIFY YOUR EMAIL
+      </span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding-top:16px; font-size:20px; font-weight:700; color:#111111;">
+      Welcome{% if user.display_name %}, {{ user.display_name }}{% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td style="padding-top:8px; font-size:14px; line-height:22px; color:#666666;">
+      Confirm your email address to finish setting up your RemindGrid account and start tracking your subscriptions.
+    </td>
+  </tr>
+</table>
+
+<!-- CTA -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
+  <tr>
+    <td align="center">
+      <a href="{{ verification_url }}"
+         style="display:inline-block; background-color:#F97316; color:#ffffff; font-size:14px; font-weight:600; text-decoration:none; padding:12px 28px; border-radius:8px;">
+        Verify email address
+      </a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="padding-top:24px; font-size:13px; line-height:20px; color:#999999; text-align:center;">
+      This link expires in 15 minutes. If you didn't create a RemindGrid account, you can safely ignore this email.
+    </td>
+  </tr>
+</table>
+
+{% endblock %}

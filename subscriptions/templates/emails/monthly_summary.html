@@ -1,0 +1,97 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Your {{ month_label }} spend summary{% endblock %}
+{% block preheader %}You spent {{ total_spend }} on subscriptions in {{ month_label }}{% endblock %}
+{% block manage_url %}https://remindgrid.com/dashboard/{% endblock %}
+
+{% block content %}
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="padding-bottom:4px;">
+      <span style="display:inline-block; background-color:#EEF2FF; color:#4338CA; font-size:12px; font-weight:600; padding:4px 10px; border-radius:999px;">
+        MONTHLY SUMMARY
+      </span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding-top:16px; font-size:20px; font-weight:700; color:#111111;">
+      Your {{ month_label }} recap{% if user.display_name %}, {{ user.display_name }}{% endif %}
+    </td>
+  </tr>
+</table>
+
+<!-- Total spend hero -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px; background-color:#4338CA; border-radius:10px;">
+  <tr>
+    <td style="padding:24px; text-align:center;">
+      <div style="font-size:12px; font-weight:600; color:#C7D2FE; letter-spacing:0.4px; text-transform:uppercase;">Total spend</div>
+      <div style="font-size:32px; font-weight:700; color:#ffffff; padding-top:4px;">{{ total_spend }}</div>
+      {% if trend_percent is not None %}
+      <div style="font-size:13px; color:{% if trend_percent > 0 %}#FCA5A5{% else %}#A7F3D0{% endif %}; padding-top:6px;">
+        {% if trend_percent > 0 %}▲{% elif trend_percent < 0 %}▼{% else %}—{% endif %}
+        {{ trend_percent|floatformat:1 }}% vs last month
+      </div>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+
+<!-- Category breakdown -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
+  <tr>
+    <td style="font-size:13px; font-weight:600; color:#999999; text-transform:uppercase; letter-spacing:0.4px; padding-bottom:12px;">
+      Spend by category
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #eeeeee; border-radius:10px; overflow:hidden;">
+  {% for row in category_breakdown %}
+  <tr>
+    <td style="padding:14px 20px; {% if not forloop.last %}border-bottom:1px solid #f0f0f0;{% endif %} font-size:14px; color:#333333;">
+      {{ row.category }}
+    </td>
+    <td align="right" style="padding:14px 20px; {% if not forloop.last %}border-bottom:1px solid #f0f0f0;{% endif %} font-size:14px; font-weight:600; color:#111111;">
+      {{ row.amount }}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<!-- Upcoming renewals -->
+{% if upcoming_renewals %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
+  <tr>
+    <td style="font-size:13px; font-weight:600; color:#999999; text-transform:uppercase; letter-spacing:0.4px; padding-bottom:12px;">
+      Coming up next month
+    </td>
+  </tr>
+</table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fafafa; border:1px solid #eeeeee; border-radius:10px;">
+  {% for sub in upcoming_renewals %}
+  <tr>
+    <td style="padding:12px 20px; {% if not forloop.last %}border-bottom:1px solid #eeeeee;{% endif %} font-size:14px; color:#333333;">
+      {{ sub.name }}
+    </td>
+    <td align="right" style="padding:12px 20px; {% if not forloop.last %}border-bottom:1px solid #eeeeee;{% endif %} font-size:13px; color:#999999;">
+      {{ sub.next_renewal_date|date:"M j" }}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<!-- CTA -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
+  <tr>
+    <td align="center">
+      <a href="https://remindgrid.com/dashboard/"
+         style="display:inline-block; background-color:#4338CA; color:#ffffff; font-size:14px; font-weight:600; text-decoration:none; padding:12px 28px; border-radius:8px;">
+        View full dashboard
+      </a>
+    </td>
+  </tr>
+</table>
+
+{% endblock %}

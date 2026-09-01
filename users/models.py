@@ -23,11 +23,18 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
     
+CURRENCY_CHOICES = (
+    ('NGN', 'Nigerian Naira (₦)'),
+    ('USD', 'US Dollar($)'),
+    ('EUR', 'Euro(£)'),
+    ('GBP', 'British Pound(€)')
+)
 
 class User(AbstractUser):
     username = None
     display_name = models.CharField(max_length=255, blank=True)
     email = models.EmailField(unique=True)
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='USD')
     is_verified =  models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

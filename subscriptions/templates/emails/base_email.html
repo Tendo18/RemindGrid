@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}RemindGrid{% endblock %}</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f7f7f7; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+<!-- Preheader (hidden preview text) -->
+<div style="display:none; max-height:0; overflow:hidden; font-size:1px; line-height:1px; color:#f7f7f7;">
+  {% block preheader %}{% endblock %}
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f7f7; padding:32px 0;">
+  <tr>
+    <td align="center">
+
+      <!-- Card -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+
+        <!-- Header / brand bar -->
+        <tr>
+          <td style="background-color:#ffffff; padding:28px 32px; border-bottom:3px solid #F97316;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="font-size:20px; font-weight:700; color:#1a1a1a; letter-spacing:-0.3px;">
+                  Remind<span style="color:#F97316;">Grid</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="padding:32px;">
+            {% block content %}{% endblock %}
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:24px 32px; background-color:#fafafa; border-top:1px solid #eeeeee;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="font-size:12px; line-height:18px; color:#9a9a9a;">
+                  You're receiving this because you have a RemindGrid account.<br>
+                  <a href="{% block manage_url %}#{% endblock %}" style="color:#F97316; text-decoration:none;">Manage your account</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+      </table>
+      <!-- /Card -->
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+        <tr>
+          <td style="padding:16px 8px; text-align:center; font-size:11px; color:#b4b4b4;">
+            RemindGrid · Know what you're paying for.
+          </td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
