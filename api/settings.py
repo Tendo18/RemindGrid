@@ -150,13 +150,6 @@ _redis_url = env('REDIS_URL', default=None) or env('CELERY_BROKER_URL', default=
 CELERY_BROKER_URL = _redis_url
 CELERY_RESULT_BACKEND = _redis_url
 
-CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Lagos'
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-
 # Heroku Redis uses rediss:// (TLS) with a self-signed cert — both Celery
 # and django-redis need to be told not to verify it, or connections fail.
 if CELERY_BROKER_URL.startswith('rediss://'):
@@ -164,6 +157,7 @@ if CELERY_BROKER_URL.startswith('rediss://'):
     CELERY_REDIS_BACKEND_USE_SSL = {'ssl_cert_reqs': 'CERT_NONE'}
 
 _redis_cache_url = env('REDIS_URL', default=None) or env('REDIS_CACHE_URL', default='redis://localhost:6379/1')
+
 _cache_options = {'CLIENT_CLASS': 'django_redis.client.DefaultClient'}
 if _redis_cache_url.startswith('rediss://'):
     _cache_options['CONNECTION_POOL_KWARGS'] = {'ssl_cert_reqs': None}
