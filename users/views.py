@@ -24,7 +24,7 @@ from .service import (
 User = get_user_model()
 
 
-@method_decorator(ratelimit(key='ip', rate='5/h', method='POST', block=True), name='post')
+@method_decorator(ratelimit(key='ip', rate='50/h', method='POST', block=True), name='post')
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 

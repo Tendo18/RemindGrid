@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
+from urllib.parse import quote
 import random
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ def _send_templated_email(subject, template_name, context, to_email):
 
 def send_verification_email(user, token):
     subject = 'Verify your RemindGrid email'
-    verification_url = f'{settings.FRONTEND_URL}/verify-email/{token}'
+    verification_url = f'{settings.FRONTEND_URL}/verify-email/{token}?email={quote(user.email)}'
 
     try:
         _send_templated_email(
